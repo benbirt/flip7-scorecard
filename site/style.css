@@ -420,7 +420,9 @@ dialog.sheet::backdrop { background: #07051acc; }
   color: transparent;
 }
 .banner-score { font-size: 1.2rem; font-weight: 700; color: var(--muted); margin-top: 6px !important; }
-.close-celebration { position: absolute; z-index: 3; left: 50%; bottom: calc(24px + var(--safe-b)); transform: translateX(-50%); }
+/* Centred with margins, not a transform, so the pressed-button transform cannot
+   move it out from under the pointer (which would cancel the click). */
+.close-celebration { position: absolute; z-index: 3; left: 0; right: 0; width: fit-content; margin: 0 auto; bottom: calc(24px + var(--safe-b)); }
 
 /* Champagne */
 .bottle-wrap {
@@ -481,4 +483,3 @@ dialog.sheet::backdrop { background: #07051acc; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
-.close-celebration:active { transform: translate(-50%, 2px); }
