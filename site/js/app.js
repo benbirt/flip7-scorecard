@@ -69,32 +69,48 @@ const signed = (n) => (n > 0 ? `+${n}` : String(n));
 
 // ---- Setup ----
 
+const defaultName = (i) => `Player ${i + 1}`;
+
 function renderSetup() {
   const list = $("player-inputs");
+  // With more than two players, ✕ removes the row. A game needs two, so with
+  // only two it clears the name instead, and does nothing while it is empty.
+  const removes = state.lastNames.length > 2;
   list.replaceChildren(
-    ...state.lastNames.map((name, i) =>
-      el("li", {},
+    ...state.lastNames.map((name, i) => {
+      const button = el("button", {
+        type: "button",
+        class: "icon-btn",
+        "aria-label": removes ? `Remove player ${i + 1}` : `Clear player ${i + 1}`,
+        disabled: !removes && name === "",
+        onclick: () => {
+          if (removes) state.lastNames.splice(i, 1);
+          else state.lastNames[i] = "";
+          save();
+          renderSetup();
+          if (!removes) list.querySelectorAll("input")[i].focus();
+        },
+      }, "✕");
+      return el("li", {},
         el("span", { class: "seat" }, String(i + 1)),
         el("input", {
           type: "text",
           value: name,
-          placeholder: `Player ${i + 1}`,
+          placeholder: defaultName(i),
           "aria-label": `Player ${i + 1}`,
           autocomplete: "off",
           autocapitalize: "words",
           enterkeyhint: "next",
           maxlength: "24",
-          oninput: (e) => { state.lastNames[i] = e.target.value; save(); },
+          oninput: (e) => {
+            state.lastNames[i] = e.target.value;
+            save();
+            if (!removes) button.disabled = e.target.value === "";
+          },
         }),
-        el("button", {
-          type: "button",
-          class: "icon-btn",
-          "aria-label": `Remove player ${i + 1}`,
-          disabled: state.lastNames.length <= 2,
-          onclick: () => { state.lastNames.splice(i, 1); save(); renderSetup(); },
-        }, "✕"),
-      ),
-    ),
+        button,
+      );
+    }),
   );
   $("target").value = state.lastTarget;
   $("vengeance").checked = state.lastVengeance;
@@ -104,7 +120,7 @@ function renderSetup() {
 function startGame(e) {
   e.preventDefault();
   sound.unlock();
-  const names = state.lastNames.map((n, i) => n.trim() || `Player ${i + 1}`);
+  const names = state.lastNames.map((n, i) => n.trim() || defaultName(i));
   const lower = names.map((n) => n.toLowerCase());
   if (new Set(lower).size !== lower.length) {
     $("setup-error").textContent = "Each player needs a different name.";
@@ -392,7 +408,8 @@ function wire() {
   $("new-game").addEventListener("click", () => {
     const game = state.game;
     if (game.rounds.length > 0 && G.outcome(game).state !== "won" && !confirm("End this game and start a new one?")) return;
-    state.lastNames = game.players.map((p) => p.name);
+    // Leave unnamed seats empty so that they show the placeholder again.
+    state.lastNames = game.players.map((p, i) => (p.name === defaultName(i) ? "" : p.name));
     state.game = null;
     save();
     render();

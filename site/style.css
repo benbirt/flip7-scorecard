@@ -118,7 +118,8 @@ h3 { font-size: 1rem; margin: 18px 0 8px; }
   border-radius: 50%;
   cursor: pointer;
 }
-.icon-btn:hover { background: #ffffff14; }
+.icon-btn:hover:not(:disabled) { background: #ffffff14; }
+.icon-btn:disabled { opacity: 0.3; cursor: default; }
 :focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
 
 /* Setup */
