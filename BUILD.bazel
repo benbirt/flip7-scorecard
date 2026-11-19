@@ -1,0 +1,32 @@
+load("@aspect_rules_js//js:defs.bzl", "js_binary", "js_test")
+load("@bazel_lib//lib:copy_to_directory.bzl", "copy_to_directory")
+
+# The site as GitHub Pages serves it: bazel build //:public, then bazel-bin/public.
+# There is no build step: the browser loads the modules in site/js as they are.
+copy_to_directory(
+    name = "public",
+    srcs = glob(["site/**"]),
+    root_paths = ["site"],
+)
+
+js_test(
+    name = "game_test",
+    size = "small",
+    data = [
+        "package.json",
+        "site/js/game.js",
+        "tests/game.test.js",
+    ],
+    entry_point = "tests/game.test.js",
+)
+
+# Serves the site at http://localhost:8080/: bazel run //:serve
+js_binary(
+    name = "serve",
+    args = ["--root=public"],
+    data = [
+        "package.json",
+        ":public",
+    ],
+    entry_point = "tools/serve.js",
+)

@@ -1,0 +1,17 @@
+# Weekly updates of the GitHub Actions, which dependabot-auto-merge.yaml
+# merges once CI passes.
+#
+# Not covered here: .bazelversion, the Bazel modules (Dependabot cannot
+# evaluate a MODULE.bazel that uses rules_js) and the Node version, all of
+# which update-pins.yaml advances.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 3
+    groups:
+      github-actions:
+        patterns: ["*"]

@@ -1,0 +1,2 @@
+common --incompatible_strict_action_env
+test --test_output=errors

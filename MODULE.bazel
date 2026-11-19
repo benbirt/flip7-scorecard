@@ -1,0 +1,12 @@
+module(
+    name = "flip7_scorecard",
+    version = "0.0.0",
+)
+
+bazel_dep(name = "aspect_rules_js", version = "3.6.0")
+bazel_dep(name = "bazel_lib", version = "3.8.0")
+bazel_dep(name = "rules_nodejs", version = "6.7.7")
+
+# The tests run the game rules under Node.
+node = use_extension("@rules_nodejs//nodejs:extensions.bzl", "node", dev_dependency = True)
+node.toolchain(node_version = "24.22.1")
