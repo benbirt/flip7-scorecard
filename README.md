@@ -38,9 +38,11 @@ Audio API.
 
 - `.github/workflows/ci.yaml` runs the tests on every pull request and push,
   and deploys `main` to GitHub Pages.
-- `.github/workflows/update-pins.yaml` opens a pull request each day when
-  there is a new Bazel, Bazel module or Node release; Dependabot does the same
-  weekly for the GitHub Actions. Both are set to merge themselves once CI
+- `.github/workflows/bazel-updates.yaml` opens a pull request each day when
+  there is a new Bazel, Bazel module or Node release, through the shared
+  workflow in [benbirt/workflows](https://github.com/benbirt/workflows);
+  Dependabot does the same weekly for the GitHub Actions. Both are set to
+  merge themselves once CI
   passes. They need the `AUTOMATION_TOKEN` secret, a personal token, in both
   the Actions and the Dependabot secrets, since merges made with the
   workflow's own token would not be deployed.

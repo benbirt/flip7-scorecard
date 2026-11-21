@@ -3,7 +3,7 @@
 #
 # Not covered here: .bazelversion, the Bazel modules (Dependabot cannot
 # evaluate a MODULE.bazel that uses rules_js) and the Node version, all of
-# which update-pins.yaml advances.
+# which bazel-updates.yaml advances.
 version: 2
 updates:
   - package-ecosystem: github-actions
