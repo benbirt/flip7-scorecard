@@ -28,5 +28,5 @@ js_binary(
         "package.json",
         ":public",
     ],
-    entry_point = "tools/serve.js",
+    entry_point = "//tools:serve",
 )

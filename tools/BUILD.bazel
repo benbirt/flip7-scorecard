@@ -1,0 +1,17 @@
+# Formatting and linting, from bazel_style, and the development server that
+# //:serve runs.
+
+load("@bazel_lib//lib:copy_to_bin.bzl", "copy_to_bin")
+load("@bazel_style//:defs.bzl", "style")
+
+# The entry point of //:serve, which, being in another package, can only take
+# serve.js from the output tree.
+copy_to_bin(
+    name = "serve",
+    srcs = ["serve.js"],
+    visibility = ["//:__pkg__"],
+)
+
+# bazel run //tools:format formats every git-tracked file, //tools:format.check
+# only checks, and //tools:lint lints the Starlark.
+style()
