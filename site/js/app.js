@@ -78,20 +78,26 @@ function renderSetup() {
   const removes = state.lastNames.length > 2;
   list.replaceChildren(
     ...state.lastNames.map((name, i) => {
-      const button = el("button", {
-        type: "button",
-        class: "icon-btn",
-        "aria-label": removes ? `Remove player ${i + 1}` : `Clear player ${i + 1}`,
-        disabled: !removes && name === "",
-        onclick: () => {
-          if (removes) state.lastNames.splice(i, 1);
-          else state.lastNames[i] = "";
-          save();
-          renderSetup();
-          if (!removes) list.querySelectorAll("input")[i].focus();
+      const button = el(
+        "button",
+        {
+          type: "button",
+          class: "icon-btn",
+          "aria-label": removes ? `Remove player ${i + 1}` : `Clear player ${i + 1}`,
+          disabled: !removes && name === "",
+          onclick: () => {
+            if (removes) state.lastNames.splice(i, 1);
+            else state.lastNames[i] = "";
+            save();
+            renderSetup();
+            if (!removes) list.querySelectorAll("input")[i].focus();
+          },
         },
-      }, "✕");
-      return el("li", {},
+        "✕",
+      );
+      return el(
+        "li",
+        {},
         el("span", { class: "seat" }, String(i + 1)),
         el("input", {
           type: "text",
@@ -165,19 +171,37 @@ function renderGame() {
     ...game.players.map((p) => {
       const total = totals[p.id];
       const pct = Math.max(0, Math.min(100, (total / game.target) * 100));
-      const delta = lastRound ? lastRound[p.id] ?? 0 : null;
+      const delta = lastRound ? (lastRound[p.id] ?? 0) : null;
       const leader = game.rounds.length > 0 && total === best;
       const changed = previousTotals[p.id] !== undefined && previousTotals[p.id] !== total;
       const toGo = game.target - total;
-      return el("li", { class: `score${leader ? " leader" : ""}${finished && out.winner.id === p.id ? " winner" : ""}` },
+      return el(
+        "li",
+        { class: `score${leader ? " leader" : ""}${finished && out.winner.id === p.id ? " winner" : ""}` },
         el("span", { class: "rank", title: "Place" }, finished && out.winner.id === p.id ? "👑" : String(ranks[p.id])),
-        el("div", { class: "who" },
-          el("div", { class: "name" }, p.name,
-            !finished && dealer.id === p.id ? el("span", { class: "dealer-chip", title: "Deals this round" }, "DEALER") : null),
-          el("div", { class: "meta" },
-            delta === null ? "No rounds yet" : el("span", { class: `delta ${delta > 0 ? "up" : delta < 0 ? "down" : "zero"}` },
-              delta === 0 ? "Bust last round" : `${signed(delta)} last round`),
-            toGo > 0 && delta !== null ? ` · ${toGo} to go` : ""),
+        el(
+          "div",
+          { class: "who" },
+          el(
+            "div",
+            { class: "name" },
+            p.name,
+            !finished && dealer.id === p.id
+              ? el("span", { class: "dealer-chip", title: "Deals this round" }, "DEALER")
+              : null,
+          ),
+          el(
+            "div",
+            { class: "meta" },
+            delta === null
+              ? "No rounds yet"
+              : el(
+                  "span",
+                  { class: `delta ${delta > 0 ? "up" : delta < 0 ? "down" : "zero"}` },
+                  delta === 0 ? "Bust last round" : `${signed(delta)} last round`,
+                ),
+            toGo > 0 && delta !== null ? ` · ${toGo} to go` : "",
+          ),
         ),
         el("div", { class: `total${total < 0 ? " negative" : ""}${changed ? " bump" : ""}` }, String(total)),
         el("div", { class: "progress", "aria-hidden": "true" }, el("span", { style: `width:${pct}%` })),
@@ -195,20 +219,30 @@ function renderGame() {
     let running = Object.fromEntries(game.players.map((p) => [p.id, 0]));
     table.replaceChildren(
       el("thead", {}, el("tr", {}, el("th", {}, "#"), ...game.players.map((p) => el("th", { scope: "col" }, p.name)))),
-      el("tbody", {},
+      el(
+        "tbody",
+        {},
         ...game.rounds.map((r, i) => {
           running = Object.fromEntries(game.players.map((p) => [p.id, running[p.id] + (r[p.id] ?? 0)]));
-          return el("tr", {
-            tabindex: "0",
-            "aria-label": `Change round ${i + 1}`,
-            onclick: () => openRound(i),
-            onkeydown: (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openRound(i); } },
-          },
-          el("td", {}, String(i + 1)),
-          ...game.players.map((p) => {
-            const v = r[p.id] ?? 0;
-            return el("td", { class: v < 0 ? "neg" : "", title: `Total ${running[p.id]}` }, String(v));
-          }));
+          return el(
+            "tr",
+            {
+              tabindex: "0",
+              "aria-label": `Change round ${i + 1}`,
+              onclick: () => openRound(i),
+              onkeydown: (e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  openRound(i);
+                }
+              },
+            },
+            el("td", {}, String(i + 1)),
+            ...game.players.map((p) => {
+              const v = r[p.id] ?? 0;
+              return el("td", { class: v < 0 ? "neg" : "", title: `Total ${running[p.id]}` }, String(v));
+            }),
+          );
         }),
       ),
       el("tfoot", {}, el("tr", {}, el("td", {}, "Σ"), ...game.players.map((p) => el("td", {}, String(totals[p.id]))))),
@@ -257,21 +291,30 @@ function renderEntries() {
     ...game.players.map((p, i) => {
       const text = entry.texts[p.id] ?? "";
       const shown = text === "" ? "–" : text;
-      return el("li", {},
-        el("button", {
-          type: "button",
-          class: "entry",
-          role: "option",
-          "aria-selected": String(i === entry.selected),
-          onclick: () => { entry.selected = i; renderEntries(); },
-        },
-        el("span", { class: "name" }, p.name),
-        el("span", { class: `value${text === "" ? " empty" : ""}${text.startsWith("-") ? " neg" : ""}` }, shown)),
+      return el(
+        "li",
+        {},
+        el(
+          "button",
+          {
+            type: "button",
+            class: "entry",
+            role: "option",
+            "aria-selected": String(i === entry.selected),
+            onclick: () => {
+              entry.selected = i;
+              renderEntries();
+            },
+          },
+          el("span", { class: "name" }, p.name),
+          el("span", { class: `value${text === "" ? " empty" : ""}${text.startsWith("-") ? " neg" : ""}` }, shown),
+        ),
       );
     }),
   );
   const isLast = entry.selected === game.players.length - 1;
-  $("next-entry").textContent = isLast || entry.index !== null ? "Save round" : `Next: ${game.players[entry.selected + 1].name} ›`;
+  $("next-entry").textContent =
+    isLast || entry.index !== null ? "Save round" : `Next: ${game.players[entry.selected + 1].name} ›`;
   $("entry-list").children[entry.selected]?.scrollIntoView({ block: "nearest" });
 }
 
@@ -332,13 +375,18 @@ function party() {
 function renderSettings() {
   $("celebration-choices").replaceChildren(
     ...G.CELEBRATIONS.map((c) =>
-      el("label", { class: "choice" },
+      el(
+        "label",
+        { class: "choice" },
         el("input", {
           type: "radio",
           name: "celebration",
           value: c.id,
           checked: state.celebration === c.id,
-          onchange: () => { state.celebration = c.id; save(); },
+          onchange: () => {
+            state.celebration = c.id;
+            save();
+          },
         }),
         el("span", {}, el("b", { "aria-hidden": "true" }, c.emoji), c.label),
       ),
@@ -350,7 +398,9 @@ function renderSettings() {
   if (game) {
     $("rename-list").replaceChildren(
       ...game.players.map((p, i) =>
-        el("li", {},
+        el(
+          "li",
+          {},
           el("span", { class: "seat" }, String(i + 1)),
           el("input", {
             type: "text",
@@ -391,9 +441,15 @@ function wire() {
   });
   $("target").addEventListener("change", (e) => {
     const v = Number.parseInt(e.target.value, 10);
-    if (v > 0) { state.lastTarget = v; save(); }
+    if (v > 0) {
+      state.lastTarget = v;
+      save();
+    }
   });
-  $("vengeance").addEventListener("change", (e) => { state.lastVengeance = e.target.checked; save(); });
+  $("vengeance").addEventListener("change", (e) => {
+    state.lastVengeance = e.target.checked;
+    save();
+  });
 
   $("score-round").addEventListener("click", () => openRound());
   $("undo").addEventListener("click", () => {
@@ -407,7 +463,8 @@ function wire() {
   });
   $("new-game").addEventListener("click", () => {
     const game = state.game;
-    if (game.rounds.length > 0 && G.outcome(game).state !== "won" && !confirm("End this game and start a new one?")) return;
+    if (game.rounds.length > 0 && G.outcome(game).state !== "won" && !confirm("End this game and start a new one?"))
+      return;
     // Leave unnamed seats empty so that they show the placeholder again.
     state.lastNames = game.players.map((p, i) => (p.name === defaultName(i) ? "" : p.name));
     state.game = null;
@@ -421,7 +478,10 @@ function wire() {
     render();
     toast("New game, same players. Good luck!");
   });
-  $("celebrate-again").addEventListener("click", () => { sound.unlock(); party(); });
+  $("celebrate-again").addEventListener("click", () => {
+    sound.unlock();
+    party();
+  });
 
   // Round dialog.
   $("keypad").addEventListener("click", (e) => {
@@ -457,8 +517,10 @@ function wire() {
     if (/^[0-9]$/.test(e.key)) press(e.key);
     else if (e.key === "Backspace") press("back");
     else if (e.key === "-") press("neg");
-    else if (e.key === "Enter") { e.preventDefault(); advance(); }
-    else if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+    else if (e.key === "Enter") {
+      e.preventDefault();
+      advance();
+    } else if (e.key === "ArrowDown" || e.key === "ArrowUp") {
       e.preventDefault();
       const n = state.game.players.length;
       entry.selected = (entry.selected + (e.key === "ArrowDown" ? 1 : n - 1)) % n;
@@ -467,7 +529,9 @@ function wire() {
   });
   // A tap on the backdrop closes the sheet.
   for (const d of document.querySelectorAll("dialog")) {
-    d.addEventListener("click", (e) => { if (e.target === d) d.close(); });
+    d.addEventListener("click", (e) => {
+      if (e.target === d) d.close();
+    });
   }
 
   // Settings.
@@ -475,7 +539,10 @@ function wire() {
     renderSettings();
     $("settings-dialog").showModal();
   });
-  $("sound").addEventListener("change", (e) => { state.sound = e.target.checked; save(); });
+  $("sound").addEventListener("change", (e) => {
+    state.sound = e.target.checked;
+    save();
+  });
   $("preview").addEventListener("click", () => {
     sound.unlock();
     $("settings-dialog").close();
