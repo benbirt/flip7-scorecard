@@ -15,9 +15,7 @@ const TYPES = {
   ".webmanifest": "application/manifest+json",
 };
 
-const args = Object.fromEntries(
-  process.argv.slice(2).map((a) => a.replace(/^--/, "").split("=")),
-);
+const args = Object.fromEntries(process.argv.slice(2).map((a) => a.replace(/^--/, "").split("=")));
 const root = resolve(args.root ?? "public");
 const port = Number(args.port ?? 8080);
 
@@ -35,6 +33,9 @@ createServer((req, res) => {
     res.writeHead(404).end("Not found");
     return;
   }
-  res.writeHead(200, { "content-type": TYPES[extname(file)] ?? "application/octet-stream", "cache-control": "no-store" });
+  res.writeHead(200, {
+    "content-type": TYPES[extname(file)] ?? "application/octet-stream",
+    "cache-control": "no-store",
+  });
   createReadStream(file).pipe(res);
 }).listen(port, () => console.log(`Serving ${root} at http://localhost:${port}/`));

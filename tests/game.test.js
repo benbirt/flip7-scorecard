@@ -6,7 +6,9 @@ import * as G from "../site/js/game.js";
 function play(game, ...rounds) {
   for (const scores of rounds) {
     const round = {};
-    game.players.forEach((p, i) => { round[p.id] = scores[i]; });
+    game.players.forEach((p, i) => {
+      round[p.id] = scores[i];
+    });
     game = G.addRound(game, round);
   }
   return game;
@@ -16,7 +18,10 @@ test("a game needs two named players and a positive target", () => {
   assert.throws(() => G.newGame(["Ana", " "]), /two players/);
   assert.throws(() => G.newGame(["Ana", "Bo"], { target: 0 }), /positive/);
   const game = G.newGame([" Ana ", "", "Bo"]);
-  assert.deepEqual(game.players.map((p) => p.name), ["Ana", "Bo"]);
+  assert.deepEqual(
+    game.players.map((p) => p.name),
+    ["Ana", "Bo"],
+  );
   assert.equal(game.target, 200);
   assert.equal(game.vengeance, false);
   assert.notEqual(game.players[0].id, game.players[1].id);
@@ -45,7 +50,10 @@ test("a tie for the lead at the target means another round", () => {
   let game = play(G.newGame(["Ana", "Bo"]), [100, 120], [110, 90]);
   const out = G.outcome(game);
   assert.equal(out.state, "tie");
-  assert.deepEqual(out.leaders.map((p) => p.name), ["Ana", "Bo"]);
+  assert.deepEqual(
+    out.leaders.map((p) => p.name),
+    ["Ana", "Bo"],
+  );
   game = play(game, [0, 3]);
   assert.equal(G.outcome(game).winner.name, "Bo");
 });
@@ -92,7 +100,10 @@ test("the Flip 7 bonus adds 15", () => {
 
 test("ranks share places on ties", () => {
   const game = play(G.newGame(["Ana", "Bo", "Cy", "Di"]), [10, 30, 30, 5]);
-  assert.deepEqual(game.players.map((p) => G.ranks(game)[p.id]), [3, 1, 1, 4]);
+  assert.deepEqual(
+    game.players.map((p) => G.ranks(game)[p.id]),
+    [3, 1, 1, 4],
+  );
 });
 
 test("the deal moves round the table", () => {
@@ -117,7 +128,10 @@ test("rounds can be changed and removed", () => {
 test("rematch keeps players and settings but not rounds", () => {
   const game = play(G.newGame(["Ana", "Bo"], { target: 150, vengeance: true }), [200, 0]);
   const next = G.rematch(game);
-  assert.deepEqual(next.players.map((p) => p.name), ["Ana", "Bo"]);
+  assert.deepEqual(
+    next.players.map((p) => p.name),
+    ["Ana", "Bo"],
+  );
   assert.equal(next.target, 150);
   assert.equal(next.vengeance, true);
   assert.equal(next.rounds.length, 0);

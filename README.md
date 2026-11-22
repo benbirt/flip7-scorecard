@@ -27,6 +27,8 @@ dependencies. Bazel tests the game rules under Node and assembles the site.
 bazel test //...              # the tests in tests/
 bazel run //:serve            # the site at http://localhost:8080/
 bazel build //:public         # the site as deployed, in bazel-bin/public
+bazel run //tools:format      # format every file (benbirt/bazel-style)
+bazel run //tools:lint        # lint the Starlark
 ```
 
 The rules live in `site/js/game.js`, apart from the page so that they can be

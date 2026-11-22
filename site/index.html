@@ -1,156 +1,163 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Flip 7 Scorecard</title>
-  <meta name="description" content="A scorecard for the card game Flip 7, with negative scores for With a Vengeance.">
-  <meta name="theme-color" content="#16123a">
-  <link rel="icon" href="icon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="icon-180.png">
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="style.css">
-  <script type="module" src="js/app.js"></script>
-</head>
-<body>
-  <header class="topbar">
-    <h1><span class="logo" aria-hidden="true">7</span> Flip 7 Scorecard</h1>
-    <button class="icon-btn" id="open-settings" aria-label="Settings" title="Settings">⚙︎</button>
-  </header>
-
-  <main>
-    <!-- Setup: who plays and how. -->
-    <section id="setup" hidden>
-      <form id="setup-form" class="card">
-        <h2>New game</h2>
-        <fieldset>
-          <legend>Players <span class="hint">in seating order</span></legend>
-          <ol id="player-inputs" class="player-inputs"></ol>
-          <button type="button" class="btn ghost" id="add-player">+ Add player</button>
-        </fieldset>
-
-        <label class="field">
-          <span>Play to</span>
-          <input id="target" type="number" inputmode="numeric" min="1" max="9999" step="1" value="200" required>
-        </label>
-
-        <label class="switch">
-          <input id="vengeance" type="checkbox">
-          <span class="track" aria-hidden="true"></span>
-          <span>
-            <strong>With a Vengeance</strong> 😈
-            <span class="hint">Allows negative scores</span>
-          </span>
-        </label>
-
-        <p class="error" id="setup-error" role="alert"></p>
-        <button class="btn primary big" type="submit">Deal me in</button>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Flip 7 Scorecard</title>
+    <meta name="description"
+          content="A scorecard for the card game Flip 7, with negative scores for With a Vengeance.">
+    <meta name="theme-color" content="#16123a">
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="icon-180.png">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="js/app.js"></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <h1><span class="logo" aria-hidden="true">7</span> Flip 7 Scorecard</h1>
+      <button class="icon-btn"
+              id="open-settings"
+              aria-label="Settings"
+              title="Settings">⚙︎</button>
+    </header>
+    <main>
+      <!-- Setup: who plays and how. -->
+      <section id="setup" hidden>
+        <form id="setup-form" class="card">
+          <h2>New game</h2>
+          <fieldset>
+            <legend>Players <span class="hint">in seating order</span></legend>
+            <ol id="player-inputs" class="player-inputs">
+            </ol>
+            <button type="button" class="btn ghost" id="add-player">+ Add player</button>
+          </fieldset>
+          <label class="field">
+            <span>Play to</span>
+            <input id="target"
+                   type="number"
+                   inputmode="numeric"
+                   min="1"
+                   max="9999"
+                   step="1"
+                   value="200"
+                   required>
+          </label>
+          <label class="switch">
+            <input id="vengeance" type="checkbox">
+            <span class="track" aria-hidden="true"></span>
+            <span>
+              <strong>With a Vengeance</strong> 😈
+              <span class="hint">Allows negative scores</span>
+            </span>
+          </label>
+          <p class="error" id="setup-error" role="alert"></p>
+          <button class="btn primary big" type="submit">Deal me in</button>
+        </form>
+      </section>
+      <!-- The game in progress. -->
+      <section id="game" hidden>
+        <p class="status" id="status"></p>
+        <ul class="scores" id="scores">
+        </ul>
+        <div class="winner-bar" id="winner-bar" hidden>
+          <p id="winner-text"></p>
+          <div class="row">
+            <button class="btn" id="celebrate-again">🎉 Celebrate again</button>
+            <button class="btn primary" id="rematch">Rematch</button>
+          </div>
+        </div>
+        <details class="card history" id="history" open>
+          <summary>Rounds</summary>
+          <div class="table-wrap">
+            <table id="history-table">
+            </table>
+          </div>
+          <p class="hint">Tap a round to change it.</p>
+        </details>
+        <div class="row end-actions">
+          <button class="btn ghost" id="undo">↶ Undo last round</button>
+          <button class="btn ghost" id="new-game">New game</button>
+        </div>
+        <div class="sticky-action">
+          <button class="btn primary big" id="score-round"></button>
+        </div>
+      </section>
+    </main>
+    <footer class="footer">
+      Unofficial scorecard. Flip 7 is a game by The Op.
+      <a href="https://github.com/benbirt/flip7-scorecard">Source</a>
+    </footer>
+    <!-- Entering one round's scores. -->
+    <dialog id="round-dialog" class="sheet">
+      <form method="dialog" class="sheet-inner" id="round-form">
+        <header class="sheet-head">
+          <h2 id="round-title">Round</h2>
+          <button type="button" class="btn ghost danger small" id="delete-round" hidden>Delete</button>
+          <button type="button" class="icon-btn" id="close-round" aria-label="Close">✕</button>
+        </header>
+        <ul class="entry-list"
+            id="entry-list"
+            role="listbox"
+            aria-label="Players">
+        </ul>
+        <div class="quick">
+          <button type="button" class="btn" data-quick="bust">💥 Bust (0)</button>
+          <button type="button" class="btn" data-quick="flip7">✨ Flip 7 +15</button>
+        </div>
+        <div class="keypad" id="keypad">
+          <button type="button" data-key="1">1</button>
+          <button type="button" data-key="2">2</button>
+          <button type="button" data-key="3">3</button>
+          <button type="button" data-key="4">4</button>
+          <button type="button" data-key="5">5</button>
+          <button type="button" data-key="6">6</button>
+          <button type="button" data-key="7">7</button>
+          <button type="button" data-key="8">8</button>
+          <button type="button" data-key="9">9</button>
+          <button type="button" data-key="neg" id="key-neg" aria-label="Make negative">±</button>
+          <button type="button" data-key="0">0</button>
+          <button type="button" data-key="back" aria-label="Delete digit">⌫</button>
+        </div>
+        <button type="button" class="btn primary big" id="next-entry"></button>
       </form>
-    </section>
-
-    <!-- The game in progress. -->
-    <section id="game" hidden>
-      <p class="status" id="status"></p>
-      <ul class="scores" id="scores"></ul>
-      <div class="winner-bar" id="winner-bar" hidden>
-        <p id="winner-text"></p>
-        <div class="row">
-          <button class="btn" id="celebrate-again">🎉 Celebrate again</button>
-          <button class="btn primary" id="rematch">Rematch</button>
+    </dialog>
+    <!-- Settings: the celebration and sound. -->
+    <dialog id="settings-dialog" class="sheet">
+      <form method="dialog" class="sheet-inner">
+        <header class="sheet-head">
+          <h2>Settings</h2>
+          <button class="icon-btn" aria-label="Close">✕</button>
+        </header>
+        <fieldset>
+          <legend>Winner's celebration</legend>
+          <div class="choices" id="celebration-choices"></div>
+        </fieldset>
+        <label class="switch">
+          <input id="sound" type="checkbox">
+          <span class="track" aria-hidden="true"></span>
+          <span><strong>Sound effects</strong></span>
+        </label>
+        <button type="button" class="btn big" id="preview">Preview celebration</button>
+        <div id="rename-section" hidden>
+          <h3>Player names</h3>
+          <ul class="player-inputs" id="rename-list">
+          </ul>
         </div>
+      </form>
+    </dialog>
+    <!-- The winner's celebration. -->
+    <div id="celebration" class="celebration" hidden>
+      <canvas id="fx"></canvas>
+      <div class="stage" id="stage"></div>
+      <div class="banner" id="banner">
+        <p class="banner-small">Winner!</p>
+        <p class="banner-name" id="banner-name"></p>
+        <p class="banner-score" id="banner-score"></p>
       </div>
-
-      <details class="card history" id="history" open>
-        <summary>Rounds</summary>
-        <div class="table-wrap">
-          <table id="history-table"></table>
-        </div>
-        <p class="hint">Tap a round to change it.</p>
-      </details>
-
-      <div class="row end-actions">
-        <button class="btn ghost" id="undo">↶ Undo last round</button>
-        <button class="btn ghost" id="new-game">New game</button>
-      </div>
-
-      <div class="sticky-action">
-        <button class="btn primary big" id="score-round"></button>
-      </div>
-    </section>
-  </main>
-
-  <footer class="footer">
-    Unofficial scorecard. Flip 7 is a game by The Op.
-    <a href="https://github.com/benbirt/flip7-scorecard">Source</a>
-  </footer>
-
-  <!-- Entering one round's scores. -->
-  <dialog id="round-dialog" class="sheet">
-    <form method="dialog" class="sheet-inner" id="round-form">
-      <header class="sheet-head">
-        <h2 id="round-title">Round</h2>
-        <button type="button" class="btn ghost danger small" id="delete-round" hidden>Delete</button>
-        <button type="button" class="icon-btn" id="close-round" aria-label="Close">✕</button>
-      </header>
-      <ul class="entry-list" id="entry-list" role="listbox" aria-label="Players"></ul>
-      <div class="quick">
-        <button type="button" class="btn" data-quick="bust">💥 Bust (0)</button>
-        <button type="button" class="btn" data-quick="flip7">✨ Flip 7 +15</button>
-      </div>
-      <div class="keypad" id="keypad">
-        <button type="button" data-key="1">1</button>
-        <button type="button" data-key="2">2</button>
-        <button type="button" data-key="3">3</button>
-        <button type="button" data-key="4">4</button>
-        <button type="button" data-key="5">5</button>
-        <button type="button" data-key="6">6</button>
-        <button type="button" data-key="7">7</button>
-        <button type="button" data-key="8">8</button>
-        <button type="button" data-key="9">9</button>
-        <button type="button" data-key="neg" id="key-neg" aria-label="Make negative">±</button>
-        <button type="button" data-key="0">0</button>
-        <button type="button" data-key="back" aria-label="Delete digit">⌫</button>
-      </div>
-      <button type="button" class="btn primary big" id="next-entry"></button>
-    </form>
-  </dialog>
-
-  <!-- Settings: the celebration and sound. -->
-  <dialog id="settings-dialog" class="sheet">
-    <form method="dialog" class="sheet-inner">
-      <header class="sheet-head">
-        <h2>Settings</h2>
-        <button class="icon-btn" aria-label="Close">✕</button>
-      </header>
-      <fieldset>
-        <legend>Winner's celebration</legend>
-        <div class="choices" id="celebration-choices"></div>
-      </fieldset>
-      <label class="switch">
-        <input id="sound" type="checkbox">
-        <span class="track" aria-hidden="true"></span>
-        <span><strong>Sound effects</strong></span>
-      </label>
-      <button type="button" class="btn big" id="preview">Preview celebration</button>
-      <div id="rename-section" hidden>
-        <h3>Player names</h3>
-        <ul class="player-inputs" id="rename-list"></ul>
-      </div>
-    </form>
-  </dialog>
-
-  <!-- The winner's celebration. -->
-  <div id="celebration" class="celebration" hidden>
-    <canvas id="fx"></canvas>
-    <div class="stage" id="stage"></div>
-    <div class="banner" id="banner">
-      <p class="banner-small">Winner!</p>
-      <p class="banner-name" id="banner-name"></p>
-      <p class="banner-score" id="banner-score"></p>
+      <button class="btn primary close-celebration" id="close-celebration">Back to the scores</button>
     </div>
-    <button class="btn primary close-celebration" id="close-celebration">Back to the scores</button>
-  </div>
-
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
-</body>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
 </html>

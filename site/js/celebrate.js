@@ -31,8 +31,16 @@ class Particles {
   add(p) {
     if (this.list.length > 2500) return;
     this.list.push({
-      kind: "dot", size: 3, gravity: 300, drag: 0.5, rot: 0, vr: 0, wobble: 0,
-      color: "#fff", age: 0, ...p,
+      kind: "dot",
+      size: 3,
+      gravity: 300,
+      drag: 0.5,
+      rot: 0,
+      vr: 0,
+      wobble: 0,
+      color: "#fff",
+      age: 0,
+      ...p,
     });
   }
 
@@ -192,9 +200,11 @@ const scenes = {
       for (let i = 0; i < rate * dt * ctx.amount; i++) {
         const speed = rand(500, 1200) * (since < 0.6 ? 1.1 : 0.8);
         const spread = rand(-0.28, 0.28);
-        const c = Math.cos(spread), s = Math.sin(spread);
+        const c = Math.cos(spread),
+          s = Math.sin(spread);
         ctx.fx.add({
-          x: mouth.x, y: mouth.y,
+          x: mouth.x,
+          y: mouth.y,
           vx: (dir.x * c - dir.y * s) * speed,
           vy: (dir.x * s + dir.y * c) * speed,
           life: rand(1, 2.2),
@@ -208,10 +218,15 @@ const scenes = {
       for (let i = 0; i < 25 * dt * ctx.amount; i++) {
         ctx.fx.add({
           kind: "bubble",
-          x: rand(0, ctx.fx.w), y: ctx.fx.h + 10,
-          vx: 0, vy: rand(-160, -70),
-          gravity: -20, drag: 0, wobble: rand(10, 40),
-          life: 12, size: rand(3, 9),
+          x: rand(0, ctx.fx.w),
+          y: ctx.fx.h + 10,
+          vx: 0,
+          vy: rand(-160, -70),
+          gravity: -20,
+          drag: 0,
+          wobble: rand(10, 40),
+          life: 12,
+          size: rand(3, 9),
           color: pick(["#ffe58acc", "#ffffffaa", "#ffcf3faa"]),
         });
       }
@@ -227,7 +242,8 @@ const scenes = {
       if (t >= nextLaunch) {
         nextLaunch = t + (t < 2 ? rand(0.2, 0.45) : rand(0.4, 0.9)) / Math.max(ctx.amount, 0.3);
         rockets.push({
-          x: rand(0.15, 0.85) * ctx.fx.w, y: ctx.fx.h,
+          x: rand(0.15, 0.85) * ctx.fx.w,
+          y: ctx.fx.h,
           vy: -rand(0.9, 1.25) * Math.sqrt(2 * 600 * ctx.fx.h * rand(0.5, 0.8)),
           vx: rand(-60, 60),
           hue: pick([0, 45, 160, 200, 280, 320]),
@@ -238,7 +254,16 @@ const scenes = {
         r.vy += 600 * dt;
         r.x += r.vx * dt;
         r.y += r.vy * dt;
-        ctx.fx.add({ x: r.x, y: r.y, vx: rand(-20, 20), vy: rand(20, 60), life: 0.4, gravity: 0, size: 2, color: "#ffd9a0" });
+        ctx.fx.add({
+          x: r.x,
+          y: r.y,
+          vx: rand(-20, 20),
+          vy: rand(20, 60),
+          life: 0.4,
+          gravity: 0,
+          size: 2,
+          color: "#ffd9a0",
+        });
         if (r.vy >= -40) {
           rockets.splice(i, 1);
           const n = Math.round(rand(60, 110) * ctx.amount);
@@ -248,9 +273,13 @@ const scenes = {
             const sp = power * rand(0.85, 1.05);
             ctx.fx.add({
               kind: Math.random() < 0.25 ? "star" : "spark",
-              x: r.x, y: r.y,
-              vx: Math.cos(a) * sp, vy: Math.sin(a) * sp,
-              life: rand(1.1, 1.9), gravity: 120, drag: 1.4,
+              x: r.x,
+              y: r.y,
+              vx: Math.cos(a) * sp,
+              vy: Math.sin(a) * sp,
+              life: rand(1.1, 1.9),
+              gravity: 120,
+              drag: 1.4,
               size: rand(1.5, 2.8),
               color: `hsl(${r.hue + rand(-20, 20)} 100% ${rand(60, 80)}%)`,
             });
@@ -272,18 +301,28 @@ const scenes = {
       const { w, h } = ctx.fx;
       if (!fired) {
         fired = true;
-        if (ctx.sound) { sound.pop(); sound.pop(0.08); }
+        if (ctx.sound) {
+          sound.pop();
+          sound.pop(0.08);
+        }
         for (const side of [-1, 1]) {
           for (let i = 0; i < 160 * ctx.amount; i++) {
             const a = (side < 0 ? -Math.PI / 3 : (-2 * Math.PI) / 3) + rand(-0.35, 0.35);
             const sp = rand(600, 1300) * Math.min(1.3, h / 700);
             ctx.fx.add({
               kind: "rect",
-              x: side < 0 ? 0 : w, y: h,
-              vx: Math.cos(a) * sp, vy: Math.sin(a) * sp,
-              life: rand(3, 5), gravity: 500, drag: 2.2,
-              size: rand(4, 8), rot: rand(0, 6), vr: rand(-12, 12),
-              wobble: rand(20, 60), color: pick(PARTY),
+              x: side < 0 ? 0 : w,
+              y: h,
+              vx: Math.cos(a) * sp,
+              vy: Math.sin(a) * sp,
+              life: rand(3, 5),
+              gravity: 500,
+              drag: 2.2,
+              size: rand(4, 8),
+              rot: rand(0, 6),
+              vr: rand(-12, 12),
+              wobble: rand(20, 60),
+              color: pick(PARTY),
             });
           }
         }
@@ -292,11 +331,18 @@ const scenes = {
       for (let i = 0; i < rate * dt * ctx.amount; i++) {
         ctx.fx.add({
           kind: "rect",
-          x: rand(0, w), y: -10,
-          vx: rand(-40, 40), vy: rand(60, 160),
-          life: 9, gravity: 40, drag: 0.3,
-          size: rand(4, 7), rot: rand(0, 6), vr: rand(-8, 8),
-          wobble: rand(30, 90), color: pick(PARTY),
+          x: rand(0, w),
+          y: -10,
+          vx: rand(-40, 40),
+          vy: rand(60, 160),
+          life: 9,
+          gravity: 40,
+          drag: 0.3,
+          size: rand(4, 7),
+          rot: rand(0, 6),
+          vr: rand(-8, 8),
+          wobble: rand(30, 90),
+          color: pick(PARTY),
         });
       }
     };
@@ -315,19 +361,32 @@ const scenes = {
           const a = rand(0, Math.PI * 2);
           const sp = rand(150, 600);
           ctx.fx.add({
-            kind: "star", x: r.left + r.width / 2, y: r.top + r.height * 0.35,
-            vx: Math.cos(a) * sp, vy: Math.sin(a) * sp,
-            life: rand(1, 2), gravity: 200, drag: 1.5, size: rand(2, 4),
-            rot: rand(0, 1), color: pick(GOLDS),
+            kind: "star",
+            x: r.left + r.width / 2,
+            y: r.top + r.height * 0.35,
+            vx: Math.cos(a) * sp,
+            vy: Math.sin(a) * sp,
+            life: rand(1, 2),
+            gravity: 200,
+            drag: 1.5,
+            size: rand(2, 4),
+            rot: rand(0, 1),
+            color: pick(GOLDS),
           });
         }
       }
       for (let i = 0; i < 18 * dt * ctx.amount; i++) {
         ctx.fx.add({
           kind: "star",
-          x: r.left + rand(0, r.width), y: r.top + rand(0, r.height * 0.7),
-          vx: 0, vy: 0, gravity: 0, life: rand(0.5, 1.2),
-          size: rand(2, 4.5), rot: rand(0, 1), color: pick(GOLDS),
+          x: r.left + rand(0, r.width),
+          y: r.top + rand(0, r.height * 0.7),
+          vx: 0,
+          vy: 0,
+          gravity: 0,
+          life: rand(0.5, 1.2),
+          size: rand(2, 4.5),
+          rot: rand(0, 1),
+          color: pick(GOLDS),
         });
       }
     };
@@ -368,7 +427,9 @@ export function celebrate(kind, { name, detail, withSound }) {
 
   return new Promise((resolve) => {
     const close = document.getElementById("close-celebration");
-    const onKey = (e) => { if (e.key === "Escape") stop(); };
+    const onKey = (e) => {
+      if (e.key === "Escape") stop();
+    };
     running = () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", onResize);

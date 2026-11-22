@@ -74,7 +74,13 @@ export function boom(at = 0) {
   if (!ac) return;
   noise(ac, { at, duration: 0.9, type: "lowpass", freq: 400, q: 0.7, gain: 0.6 });
   for (let i = 0; i < 6; i++) {
-    noise(ac, { at: at + 0.25 + Math.random() * 0.5, duration: 0.04, freq: 3000 + Math.random() * 3000, q: 2, gain: 0.15 });
+    noise(ac, {
+      at: at + 0.25 + Math.random() * 0.5,
+      duration: 0.04,
+      freq: 3000 + Math.random() * 3000,
+      q: 2,
+      gain: 0.15,
+    });
   }
 }
 
@@ -83,7 +89,14 @@ export function fanfare(at = 0) {
   if (!ac) return;
   const notes = [523.25, 659.25, 783.99, 1046.5];
   notes.forEach((f, i) => {
-    tone(ac, { at: at + i * 0.13, duration: i === notes.length - 1 ? 0.8 : 0.2, from: f, to: f * 1.001, gain: 0.25, type: "triangle" });
+    tone(ac, {
+      at: at + i * 0.13,
+      duration: i === notes.length - 1 ? 0.8 : 0.2,
+      from: f,
+      to: f * 1.001,
+      gain: 0.25,
+      type: "triangle",
+    });
   });
 }
 
