@@ -42,7 +42,7 @@ Audio API.
   and deploys `main` to GitHub Pages.
 - `.github/workflows/bazel-updates.yaml` opens a pull request each day when
   there is a new Bazel, Bazel module or Node release, through the shared
-  workflow in [benbirt/workflows](https://github.com/benbirt/workflows);
+  workflow in [benbirt/github-infra](https://github.com/benbirt/github-infra);
   Dependabot does the same weekly for the GitHub Actions. Both are set to
   merge themselves once CI
   passes. They need the `AUTOMATION_TOKEN` secret, a personal token, in both
